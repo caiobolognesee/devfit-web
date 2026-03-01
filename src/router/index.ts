@@ -17,10 +17,18 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const auth = useAuthStore();
 
+  // Ensure auth state was loaded from storage
+  if (!auth.isReady) auth.bootstrap();
+
+  // Allow public routes
   if (to.meta.public) return true;
 
-  if (!auth.accessToken) return { name: "login" };
+  // Block private routes
+  if (!auth.isAuthenticated) {
+    return { name: "login", query: { redirect: to.fullPath } };
+  }
 
+  // Ensure user object exists (optional, depends on your backend)
   if (!auth.user) {
     try {
       await auth.fetchMe();

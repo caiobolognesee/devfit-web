@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useAuthStore } from "@/stores";
+import { useAuthStore } from "@/stores/index";
 import { useRouter } from "vue-router";
 
 const auth = useAuthStore();
@@ -15,7 +15,7 @@ async function onSubmit() {
   error.value = "";
   loading.value = true;
   try {
-    await auth.login(email.value, password.value);
+    await auth.login({ email: email.value, password: password.value });
     router.push("/");
   } catch (e: any) {
     error.value = e?.response?.data?.message ?? "Login failed";
